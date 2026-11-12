@@ -1,6 +1,6 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..core.database import get_db
 from ..models.product import Product
@@ -14,6 +14,23 @@ async def get_by_barcode(barcode: str, db: AsyncSession = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Produit introuvable")
     return _serialize(product)
+
+@router.get("/search")
+async def search_products(
+    q: str = Query(..., min_length=2, description="Terme de recherche"),
+    limit: int = Query(20, le=50),
+    db: AsyncSession = Depends(get_db),
+):
+    """Recherche par nom ou marque (insensible à la casse)."""
+    pattern = f"%{q}%"
+    stmt = (
+        select(Product)
+        .where(or_(Product.name.ilike(pattern), Product.brand.ilike(pattern)))
+        .limit(limit)
+    )
+    result = await db.execute(stmt)
+    products = result.scalars().all()
+    return [_serialize(p) for p in products]
 
 @router.get("/{product_id}")
 async def get_by_id(product_id: UUID, db: AsyncSession = Depends(get_db)):
