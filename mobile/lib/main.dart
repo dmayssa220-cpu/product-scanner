@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'data/repositories/product_repository.dart';
 import 'data/services/api_client.dart';
+import 'ui/scan/scan_viewmodel.dart';
 
 void main() {
   runApp(const ProductScannerApp());
@@ -18,6 +19,9 @@ class ProductScannerApp extends StatelessWidget {
         Provider<ApiClient>(create: (_) => ApiClient()),
         ProxyProvider<ApiClient, ProductRepository>(
           update: (context, api, previous) => ProductRepository(api),
+        ),
+        ChangeNotifierProvider<ScanViewModel>(
+          create: (context) => ScanViewModel(context.read<ProductRepository>()),
         ),
       ],
       child: MaterialApp.router(

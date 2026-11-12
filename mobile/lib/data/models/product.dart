@@ -1,3 +1,24 @@
+class ProductScore {
+  const ProductScore({
+    required this.total,
+    required this.nutrition,
+    required this.additives,
+    required this.processing,
+  });
+
+  final double total;
+  final double nutrition;
+  final double additives;
+  final double processing;
+
+  factory ProductScore.fromJson(Map<String, dynamic> json) => ProductScore(
+        total: (json['total'] as num).toDouble(),
+        nutrition: (json['nutrition'] as num).toDouble(),
+        additives: (json['additives'] as num).toDouble(),
+        processing: (json['processing'] as num).toDouble(),
+      );
+}
+
 class Product {
   const Product({
     required this.id,
@@ -9,6 +30,7 @@ class Product {
     this.processingLevel,
     this.nutritionFacts = const {},
     this.ingredients = const [],
+    this.score,
   });
 
   final String id;
@@ -20,6 +42,7 @@ class Product {
   final int? processingLevel;
   final Map<String, dynamic> nutritionFacts;
   final List<dynamic> ingredients;
+  final ProductScore? score;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
         id: json['id'] as String,
@@ -31,5 +54,8 @@ class Product {
         processingLevel: json['processing_level'] as int?,
         nutritionFacts: (json['nutrition_facts'] as Map?)?.cast<String, dynamic>() ?? const {},
         ingredients: (json['ingredients'] as List?) ?? const [],
+        score: json['score'] != null
+            ? ProductScore.fromJson(json['score'] as Map<String, dynamic>)
+            : null,
       );
 }

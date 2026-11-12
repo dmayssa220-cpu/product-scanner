@@ -14,4 +14,9 @@ class ProductRepository {
     final data = await _api.get('/products/$id');
     return Product.fromJson(data);
   }
+
+  Future<List<Product>> search(String query) async {
+    final data = await _api.getList('/products/search?q=$query');
+    return data.map((e) => Product.fromJson(e)).toList();
+  }
 }
