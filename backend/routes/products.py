@@ -4,6 +4,7 @@ from sqlalchemy import select, or_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from ..core.database import get_db
 from ..models.product import Product
+from ..app.services.scoring import compute_score
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -40,6 +41,11 @@ async def get_by_id(product_id: UUID, db: AsyncSession = Depends(get_db)):
     return _serialize(product)
 
 def _serialize(p: Product) -> dict:
+    score = compute_score(
+        nutrition_facts=p.nutrition_facts or {},
+        ingredients=p.ingredients or [],
+        processing_level=p.processing_level,
+    )
     return {
         "id": str(p.id),
         "barcode": p.barcode,
@@ -50,4 +56,10 @@ def _serialize(p: Product) -> dict:
         "ingredients": p.ingredients,
         "nutrition_facts": p.nutrition_facts,
         "processing_level": p.processing_level,
+        "score": {
+            "total": score.total,
+            "nutrition": score.nutrition,
+            "additives": score.additives,
+            "processing": score.processing,
+        },
     }
