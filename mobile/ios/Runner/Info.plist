@@ -27,6 +27,10 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
+<string>L'application utilise la caméra pour identifier les produits par photo.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>L'application accède à la photothèque pour identifier les produits.</string>
+	<key>NSCameraUsageDescription</key>
     <string>Cette application utilise la caméra pour scanner les codes-barres des produits.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

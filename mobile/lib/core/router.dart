@@ -34,6 +34,7 @@ GoRouter buildRouter(AuthRepository authRepo) {
           );
         },
       ),
+      GoRoute(path: '/scan/photo', builder: (_, __) => const PhotoScanView()),
     ],
   );
 }

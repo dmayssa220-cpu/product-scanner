@@ -24,6 +24,11 @@ class HomeView extends StatelessWidget {
               icon: const Icon(Icons.qr_code_scanner),
               label: const Text('Scanner un code-barres'),
             ),
+            ElevatedButton.icon(
+  onPressed: () => context.push('/scan/photo'),
+  icon: const Icon(Icons.photo_camera),
+  label: const Text('Identifier par photo'),
+),
           ],
         ),
       ),
