@@ -79,3 +79,4 @@ VALUES (
     4,
     '{"sugar": 56.3, "fat": 30.9, "salt": 0.107, "fiber": 0}'::jsonb
 );
+UPDATE users SET is_admin = TRUE WHERE email = 'admin@example.com';

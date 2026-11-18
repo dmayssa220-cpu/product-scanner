@@ -3,6 +3,7 @@ import '../data/models/product.dart';
 import '../data/repositories/auth_repository.dart';
 import '../data/ui/auth/auth_view.dart';
 import '../data/ui/home/home_view.dart';
+import '../data/ui/scan/photo_scan_view.dart';
 import '../data/ui/scan/scan_view.dart';
 import '../ui/home/history_view.dart';
 import '../ui/scan/product/product_view.dart';

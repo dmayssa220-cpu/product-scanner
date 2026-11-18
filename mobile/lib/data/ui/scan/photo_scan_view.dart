@@ -1,9 +1,9 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import '../../data/repositories/identify_repository.dart';
+import '../../repositories/identify_repository.dart';
 
 class PhotoScanView extends StatefulWidget {
   const PhotoScanView({super.key});
@@ -82,12 +82,14 @@ class _PhotoScanViewState extends State<PhotoScanView> {
                 children: [
                   IconButton.filled(
                     iconSize: 32,
-                    onPressed: _loading ? null : () => _pick(ImageSource.camera),
+                    onPressed:
+                        _loading ? null : () => _pick(ImageSource.camera),
                     icon: const Icon(Icons.photo_camera),
                   ),
                   IconButton.filledTonal(
                     iconSize: 32,
-                    onPressed: _loading ? null : () => _pick(ImageSource.gallery),
+                    onPressed:
+                        _loading ? null : () => _pick(ImageSource.gallery),
                     icon: const Icon(Icons.photo_library),
                   ),
                 ],

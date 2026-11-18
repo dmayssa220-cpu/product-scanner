@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'data/repositories/auth_repository.dart';
 import 'data/repositories/history_repository.dart';
+import 'data/repositories/identify_repository.dart';
 import 'data/repositories/product_repository.dart';
 import 'data/services/api_client.dart';
 import 'data/services/token_storage.dart';
@@ -33,6 +34,10 @@ class ProductScannerApp extends StatelessWidget {
         ),
         ProxyProvider<ApiClient, HistoryRepository>(
           update: (_, api, __) => HistoryRepository(api),
+        ),
+        Provider<IdentifyRepository>(
+          create: (ctx) =>
+              IdentifyRepository(storage: ctx.read<TokenStorage>()),
         ),
         ChangeNotifierProvider<ScanViewModel>(
           create: (ctx) => ScanViewModel(ctx.read<ProductRepository>()),

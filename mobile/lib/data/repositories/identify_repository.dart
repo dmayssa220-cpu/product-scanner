@@ -1,4 +1,6 @@
+import 'dart:convert' show jsonDecode;
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import '../../core/config.dart';
 import '../services/token_storage.dart';
@@ -11,7 +13,6 @@ class IdentifyRepository {
   final TokenStorage _storage;
   final http.Client _client;
 
- 
   Future<Map<String, dynamic>> identify(File image) async {
     final token = await _storage.readToken();
     final request = http.MultipartRequest(
@@ -26,10 +27,6 @@ class IdentifyRepository {
     if (response.statusCode != 200) {
       throw Exception('Erreur identification (${response.statusCode})');
     }
-    return Map<String, dynamic>.from(
-      (const JsonDecoder()).convert(response.body) as Map,
-    );
+    return Map<String, dynamic>.from(jsonDecode(response.body) as Map);
   }
 }
-
-import 'dart:convert' show JsonDecoder;
