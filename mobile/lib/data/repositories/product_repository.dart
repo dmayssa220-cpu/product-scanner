@@ -6,7 +6,7 @@ class ProductRepository {
   final ApiClient _api;
 
   Future<Product> findByBarcode(String barcode) async {
-    final data = await _api.get('/products/barcode/$barcode');
+    final data = await _api.get('/products/barcode/$barcode', auth: true);
     return Product.fromJson(data);
   }
 

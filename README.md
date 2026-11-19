@@ -1,12 +1,26 @@
 # Product Scanner
 
-Application mobile de reconnaissance et d'évaluation des produits.
+Application mobile de reconnaissance et d'évaluation des produits (Flutter + FastAPI + PostgreSQL).
 
-## Démarrage rapide
+## Architecture
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Flutter │─────▶│ FastAPI │─────▶│ PostgreSQL │
+│ (iOS/Android│ │ (Docker) │ │ (Docker) │
+└──────────────┘ └──────┬───────┘ └──────────────┘
+│
+▼
+┌──────────────┐
+│ API Vision │
+│ (Gemini) │
+└──────────────┘
+
+## Démarrage
 
 ```bash
-cp .env.example .env
+cp .env.example .env       # configurer VISION_API_KEY et JWT_SECRET
 docker compose up --build -d
-```
 
-Le démarrage lance PostgreSQL et l'API. Le stockage objet MinIO est désactivé pour l'instant, car l'image Community n'est plus publiée sur Docker Hub.
+API + Swagger : http://localhost:8000/docs
+
+Health check : curl http://localhost:8000/api/v1/health
+

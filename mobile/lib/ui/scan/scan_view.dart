@@ -18,7 +18,7 @@ class _ScanViewState extends State<ScanView> {
 
   @override
   void dispose() {
-    _controller.dispose();  
+    _controller.dispose();
     super.dispose();
   }
 
@@ -40,11 +40,11 @@ class _ScanViewState extends State<ScanView> {
             controller: _controller,
             onDetect: _onDetect,
           ),
-         
           if (vm.loading)
             const ColoredBox(
               color: Colors.black54,
-              child: Center(child: CircularProgressIndicator(color: Colors.white)),
+              child:
+                  Center(child: CircularProgressIndicator(color: Colors.white)),
             ),
           if (vm.error != null)
             Align(

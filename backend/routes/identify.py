@@ -11,7 +11,7 @@ from ..app.services.vision import identify_product, VisionError
 router = APIRouter(prefix="/identify", tags=["identify"])
 
 MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 Mo
-
+ALLOWED_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp", "application/octet-stream"}
 
 @router.post("")
 async def identify(
@@ -19,8 +19,11 @@ async def identify(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
-    if file.content_type not in {"image/jpeg", "image/png", "image/webp"}:
-        raise HTTPException(status_code=415, detail="Format d'image non supporté")
+
+    if file.content_type not in ALLOWED_TYPES:
+        if not (file.filename and file.filename.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))):
+            raise HTTPException(status_code=415, detail="Format d'image non supporté")
+
     image_bytes = await file.read()
     if len(image_bytes) > MAX_IMAGE_BYTES:
         raise HTTPException(status_code=413, detail="Image trop volumineuse (max 5 Mo)")
@@ -33,7 +36,7 @@ async def identify(
     if not result.get("name") or result.get("confidence", 0) < 0.5:
         return {"matched": False, "vision": result, "product": None}
 
-    # Recherche par similarité de nom ou marque
+
     pattern = f"%{result['name']}%"
     brand_pattern = f"%{result.get('brand') or ''}%"
     stmt = (

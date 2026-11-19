@@ -4,9 +4,10 @@ import '../data/repositories/auth_repository.dart';
 import '../data/ui/auth/auth_view.dart';
 import '../data/ui/home/home_view.dart';
 import '../data/ui/scan/photo_scan_view.dart';
-import '../data/ui/scan/scan_view.dart';
 import '../ui/home/history_view.dart';
+import '../ui/home/search_view.dart';
 import '../ui/scan/product/product_view.dart';
+import '../ui/scan/scan_view.dart';
 
 GoRouter buildRouter(AuthRepository authRepo) {
   return GoRouter(
@@ -22,6 +23,7 @@ GoRouter buildRouter(AuthRepository authRepo) {
       GoRoute(path: '/auth', builder: (context, state) => const AuthView()),
       GoRoute(path: '/', builder: (context, state) => const HomeView()),
       GoRoute(path: '/scan', builder: (context, state) => const ScanView()),
+      GoRoute(path: '/search', builder: (context, state) => const SearchView()),
       GoRoute(
           path: '/history', builder: (context, state) => const HistoryView()),
       GoRoute(
