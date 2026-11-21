@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:product_scanner/data/repositories/favorites_repository.dart';
 import 'package:provider/provider.dart';
 import '../../../data/models/product.dart';
 import '../../../data/repositories/product_repository.dart';
@@ -25,13 +26,16 @@ class ProductView extends StatelessWidget {
           }
           if (vm.error != null) {
             return Scaffold(
-              appBar: AppBar(title: const Text('Produit')),
+              appBar: AppBar(title: const Text('Produit')),              
               body: Center(child: Text(vm.error!)),
             );
           }
           final p = vm.product!;
           return Scaffold(
-            appBar: AppBar(title: Text(p.name)),
+            appBar: AppBar(title: Text(p.name),actions: [
+  _FavoriteButton(productId: p.id),
+],),
+            
             body: ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -118,7 +122,48 @@ class _SubScore extends StatelessWidget {
     );
   }
 }
+class _FavoriteButton extends StatefulWidget {
+  const _FavoriteButton({required this.productId});
+  final String productId;
+  @override
+  State<_FavoriteButton> createState() => _FavoriteButtonState();
+}
 
+class _FavoriteButtonState extends State<_FavoriteButton> {
+  bool? _isFav;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final repo = context.read<FavoritesRepository>();
+    final v = await repo.isFavorite(widget.productId);
+    if (mounted) setState(() => _isFav = v);
+  }
+
+  Future<void> _toggle() async {
+    final repo = context.read<FavoritesRepository>();
+    if (_isFav == true) {
+      await repo.remove(widget.productId);
+    } else {
+      await repo.add(widget.productId);
+    }
+    setState(() => _isFav = !(_isFav ?? false));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isFav == null) return const SizedBox(width: 48, height: 48);
+    return IconButton(
+      icon: Icon(_isFav! ? Icons.favorite : Icons.favorite_border,
+          color: _isFav! ? Colors.red : null),
+      onPressed: _toggle,
+    );
+  }
+}
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.label, required this.value});
   final String label;

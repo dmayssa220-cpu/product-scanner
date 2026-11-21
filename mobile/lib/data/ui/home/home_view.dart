@@ -22,6 +22,11 @@ class HomeView extends StatelessWidget {
             onPressed: () => _logout(context),
             icon: const Icon(Icons.logout),
           ),
+          IconButton(
+           icon: const Icon(Icons.favorite_border),
+           tooltip: 'Favoris',
+           onPressed: () => context.push('/favorites'),
+),
         ],
       ),
       body: Center(
@@ -63,6 +68,12 @@ class HomeView extends StatelessWidget {
                   onPressed: () => context.push('/history'),
                   icon: const Icon(Icons.history),
                   label: const Text('Historique des scans'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/favorites'),
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Mes favoris'),
                 ),
               ],
             ),

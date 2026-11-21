@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'core/router.dart';
 import 'data/repositories/auth_repository.dart';
+import 'data/repositories/favorites_repository.dart';
 import 'data/repositories/history_repository.dart';
 import 'data/repositories/identify_repository.dart';
 import 'data/repositories/product_repository.dart';
@@ -32,8 +33,14 @@ class ProductScannerApp extends StatelessWidget {
         ProxyProvider<ApiClient, ProductRepository>(
           update: (_, api, __) => ProductRepository(api),
         ),
+        ProxyProvider<ApiClient, FavoritesRepository>(
+        update: (_, api, __) => FavoritesRepository(api),
+   ),
         ProxyProvider<ApiClient, HistoryRepository>(
           update: (_, api, __) => HistoryRepository(api),
+        ),
+        ProxyProvider<ApiClient, FavoritesRepository>(
+          update: (_, api, __) => FavoritesRepository(api),
         ),
         Provider<IdentifyRepository>(
           create: (ctx) =>
