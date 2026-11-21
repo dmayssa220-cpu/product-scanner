@@ -7,6 +7,7 @@ from ..core.dependencies import get_current_user
 from ..models.product import Product
 from ..models.user import User
 
+
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 

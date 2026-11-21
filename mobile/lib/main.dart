@@ -9,6 +9,7 @@ import 'data/services/api_client.dart';
 import 'data/services/token_storage.dart';
 import 'data/ui/auth/auth_viewmodel.dart';
 import 'ui/scan/scan_viewmodel.dart';
+import 'core/theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,6 @@ Future<void> main() async {
 
 class ProductScannerApp extends StatelessWidget {
   const ProductScannerApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -49,10 +49,7 @@ class ProductScannerApp extends StatelessWidget {
       child: Builder(
         builder: (ctx) => MaterialApp.router(
           title: 'Product Scanner',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-            useMaterial3: true,
-          ),
+          theme: AppTheme.light(),
           routerConfig: buildRouter(ctx.read<AuthRepository>()),
         ),
       ),
