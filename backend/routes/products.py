@@ -8,6 +8,7 @@ from ..models.product import Product
 from ..models.user import User
 from ..models.scan_history import ScanHistory
 from ..app.services.scoring import compute_score, load_active_weights
+from ..services.alerts import compute_warnings
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -27,7 +28,7 @@ async def get_by_barcode(
         db.add(ScanHistory(user_id=current_user.id, product_id=product.id, scan_type="barcode"))
         await db.commit()
 
-    return await _serialize(product, db)
+    return await _serialize(product, db, current_user)
 
 
 @router.get("/search")
@@ -35,6 +36,7 @@ async def search_products(
     q: str = Query(..., min_length=2),
     limit: int = Query(20, le=50),
     db: AsyncSession = Depends(get_db),
+    current: User | None = Depends(get_optional_user),
 ):
     pattern = f"%{q}%"
     stmt = (
@@ -43,15 +45,19 @@ async def search_products(
         .limit(limit)
     )
     result = await db.execute(stmt)
-    return [await _serialize(p, db) for p in result.scalars().all()]
+    return [await _serialize(p, db, current) for p in result.scalars().all()]
 
 
 @router.get("/{product_id}")
-async def get_by_id(product_id: UUID, db: AsyncSession = Depends(get_db)):
+async def get_by_id(
+    product_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current: User | None = Depends(get_optional_user),
+):
     product = await db.get(Product, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Produit introuvable")
-    return await _serialize(product, db)
+    return await _serialize(product, db, current)
 
 
 @router.get("/{product_id}/score")
@@ -69,7 +75,7 @@ async def get_score(product_id: UUID, db: AsyncSession = Depends(get_db)):
     return {**score.to_dict(), "weights_used": weights}
 
 
-async def _serialize(p: Product, db: AsyncSession) -> dict:
+async def _serialize(p: Product, db: AsyncSession, user: User | None = None) -> dict:
     weights = await load_active_weights(db)
     score = compute_score(
         nutrition_facts=p.nutrition_facts or {},
@@ -77,6 +83,7 @@ async def _serialize(p: Product, db: AsyncSession) -> dict:
         processing_level=p.processing_level,
         weights=weights,
     )
+    warnings = compute_warnings(p.ingredients or [], user.preferences if user else {})
     return {
         "id": str(p.id),
         "barcode": p.barcode,
@@ -88,4 +95,6 @@ async def _serialize(p: Product, db: AsyncSession) -> dict:
         "nutrition_facts": p.nutrition_facts,
         "processing_level": p.processing_level,
         "score": score.to_dict(),
+        "score": score.to_dict(),
+        "warnings": warnings,
     }
