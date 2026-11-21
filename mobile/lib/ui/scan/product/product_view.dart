@@ -33,8 +33,8 @@ class ProductView extends StatelessWidget {
           final p = vm.product!;
           return Scaffold(
             appBar: AppBar(title: Text(p.name),actions: [
-  _FavoriteButton(productId: p.id),
-],),
+              _FavoriteButton(productId: p.id),
+                ],),
             
             body: ListView(
               padding: const EdgeInsets.all(16),
@@ -56,6 +56,17 @@ class ProductView extends StatelessWidget {
                   const SizedBox(height: 8),
                   ...p.ingredients.map((i) => Text('• $i')),
                 ],
+                if (p.warnings.isNotEmpty)
+                 Column(
+               children: p.warnings.map((w) => Card(
+               color: Colors.red.shade50,
+                 child: ListTile(
+             leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
+          title: Text(w.message, style: const TextStyle(color: Colors.red)),
+      ),
+    )).toList(),
+  ),
+if (p.warnings.isNotEmpty) const SizedBox(height: 16),
               ],
             ),
           );

@@ -23,10 +23,10 @@ class HomeView extends StatelessWidget {
             icon: const Icon(Icons.logout),
           ),
           IconButton(
-           icon: const Icon(Icons.favorite_border),
-           tooltip: 'Favoris',
-           onPressed: () => context.push('/favorites'),
-),
+            icon: const Icon(Icons.favorite_border),
+            tooltip: 'Favoris',
+            onPressed: () => context.push('/favorites'),
+          ),
         ],
       ),
       body: Center(
@@ -74,6 +74,12 @@ class HomeView extends StatelessWidget {
                   onPressed: () => context.push('/favorites'),
                   icon: const Icon(Icons.favorite),
                   label: const Text('Mes favoris'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () => context.push('/preferences'),
+                  icon: const Icon(Icons.tune),
+                  label: const Text('Mes préférences'),
                 ),
               ],
             ),

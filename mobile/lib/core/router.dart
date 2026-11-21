@@ -4,6 +4,7 @@ import '../data/repositories/auth_repository.dart';
 import '../data/ui/auth/auth_view.dart';
 import '../data/ui/favorites/favorites_view.dart';
 import '../data/ui/home/home_view.dart';
+import '../data/ui/preferences/preferences_view.dart';
 import '../data/ui/scan/photo_scan_view.dart';
 import '../ui/home/history_view.dart';
 import '../ui/home/search_view.dart';
@@ -26,6 +27,10 @@ GoRouter buildRouter(AuthRepository authRepo) {
       GoRoute(path: '/scan', builder: (context, state) => const ScanView()),
       GoRoute(path: '/search', builder: (context, state) => const SearchView()),
       GoRoute(path: '/favorites', builder: (_, __) => const FavoritesView()),
+      GoRoute(
+        path: '/preferences',
+        builder: (_, __) => const PreferencesView(),
+      ),
       GoRoute(
           path: '/history', builder: (context, state) => const HistoryView()),
       GoRoute(

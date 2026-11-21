@@ -31,6 +31,7 @@ class Product {
     this.nutritionFacts = const {},
     this.ingredients = const [],
     this.score,
+    this.warnings = const [],
   });
 
   final String id;
@@ -43,6 +44,7 @@ class Product {
   final Map<String, dynamic> nutritionFacts;
   final List<dynamic> ingredients;
   final ProductScore? score;
+  final List<ProductWarning> warnings;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
         id: json['id'] as String,
@@ -52,10 +54,30 @@ class Product {
         category: json['category'] as String?,
         imageUrl: json['image_url'] as String?,
         processingLevel: json['processing_level'] as int?,
-        nutritionFacts: (json['nutrition_facts'] as Map?)?.cast<String, dynamic>() ?? const {},
+        nutritionFacts:
+            (json['nutrition_facts'] as Map?)?.cast<String, dynamic>() ??
+                const {},
         ingredients: (json['ingredients'] as List?) ?? const [],
         score: json['score'] != null
             ? ProductScore.fromJson(json['score'] as Map<String, dynamic>)
             : null,
+        warnings: (json['warnings'] as List?)
+                ?.map((e) => ProductWarning.fromJson(e as Map<String, dynamic>))
+                .toList() ??
+            const [],
+      );
+}
+
+class ProductWarning {
+  const ProductWarning(
+      {required this.type, required this.key, required this.message});
+  final String type;
+  final String key;
+  final String message;
+
+  factory ProductWarning.fromJson(Map<String, dynamic> json) => ProductWarning(
+        type: json['type'] as String,
+        key: json['key'] as String,
+        message: json['message'] as String,
       );
 }
