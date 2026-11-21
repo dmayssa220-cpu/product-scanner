@@ -80,3 +80,13 @@ VALUES (
     '{"sugar": 56.3, "fat": 30.9, "salt": 0.107, "fiber": 0}'::jsonb
 );
 UPDATE users SET is_admin = TRUE WHERE email = 'admin@example.com';
+
+CREATE TABLE favorites (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE (user_id, product_id)
+);
+
+CREATE INDEX idx_favorites_user ON favorites(user_id, created_at DESC);
