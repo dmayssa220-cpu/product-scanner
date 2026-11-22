@@ -59,6 +59,37 @@ async def get_by_id(
         raise HTTPException(status_code=404, detail="Produit introuvable")
     return await _serialize(product, db, current)
 
+@router.get("/{product_id}/alternatives")
+async def alternatives(
+    product_id: UUID,
+    limit: int = 3,
+    db: AsyncSession = Depends(get_db),
+):
+    product = await db.get(Product, product_id)
+    if not product:
+        raise HTTPException(status_code=404, detail="Produit introuvable")
+
+    weights = await load_active_weights(db)
+    stmt = select(Product).where(Product.id != product_id)
+    if product.category:
+        stmt = stmt.where(Product.category == product.category)
+    candidates = (await db.execute(stmt.limit(50))).scalars().all()
+    current_score = compute_score(
+        product.nutrition_facts or [],
+        product.ingredients or [],
+        product.processing_level,
+        weights=weights,
+    ).total
+    scored = []
+    for c in candidates:
+        s = compute_score(c.nutrition_facts or [], c.ingredients or [], c.processing_level, weights=weights)
+        if s.total > current_score:
+            scored.append((c, s.total))
+
+    scored.sort(key=lambda x: x[1], reverse=True)
+    top = scored[:limit]
+
+    return [await _serialize(c, db) for c, _ in top]
 
 @router.get("/{product_id}/score")
 async def get_score(product_id: UUID, db: AsyncSession = Depends(get_db)):
@@ -73,6 +104,7 @@ async def get_score(product_id: UUID, db: AsyncSession = Depends(get_db)):
         weights=weights,
     )
     return {**score.to_dict(), "weights_used": weights}
+
 @router.get("/compare")
 async def compare(
     ids: str,

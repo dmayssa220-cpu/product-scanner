@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../data/models/product.dart';
 import '../../../data/repositories/product_repository.dart';
+import '../../widgets/product_tile.dart';
 import 'product_viewmodel.dart';
 
 class ProductView extends StatelessWidget {
@@ -73,6 +74,39 @@ class ProductView extends StatelessWidget {
                         .toList(),
                   ),
                 if (p.warnings.isNotEmpty) const SizedBox(height: 16),
+                const SizedBox(height: 32),
+                FutureBuilder<List<Product>>(
+                  future:
+                      context.read<ProductRepository>().findAlternatives(p.id),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState != ConnectionState.done) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Impossible de charger les alternatives : ${snapshot.error}',
+                      );
+                    }
+                    final alternatives = snapshot.data ?? const <Product>[];
+                    if (alternatives.isEmpty) return const SizedBox.shrink();
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Alternatives mieux notées',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ...alternatives.map(
+                          (alternative) => ProductTile(product: alternative),
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
             floatingActionButton: FloatingActionButton.extended(

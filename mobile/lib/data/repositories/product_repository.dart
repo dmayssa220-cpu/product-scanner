@@ -19,4 +19,9 @@ class ProductRepository {
     final data = await _api.getList('/products/search?q=$query');
     return data.map((e) => Product.fromJson(e)).toList();
   }
+
+  Future<List<Product>> findAlternatives(String productId) async {
+    final data = await _api.getList('/products/$productId/alternatives');
+    return data.map((e) => Product.fromJson(e)).toList();
+  }
 }
