@@ -10,6 +10,7 @@ import '../ui/home/history_view.dart';
 import '../ui/home/search_view.dart';
 import '../ui/scan/product/product_view.dart';
 import '../ui/scan/scan_view.dart';
+import '../ui/compare/compare_view.dart';
 
 GoRouter buildRouter(AuthRepository authRepo) {
   return GoRouter(
@@ -27,6 +28,10 @@ GoRouter buildRouter(AuthRepository authRepo) {
       GoRoute(path: '/scan', builder: (context, state) => const ScanView()),
       GoRoute(path: '/search', builder: (context, state) => const SearchView()),
       GoRoute(path: '/favorites', builder: (_, __) => const FavoritesView()),
+      GoRoute(path: '/compare',builder: (context, state) {final list = state.extra as List<Product>;
+    return CompareView(left: list[0], right: list[1]);
+  },
+),
       GoRoute(
         path: '/preferences',
         builder: (_, __) => const PreferencesView(),

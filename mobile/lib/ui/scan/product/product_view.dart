@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:product_scanner/data/repositories/favorites_repository.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../data/models/product.dart';
 import '../../../data/repositories/product_repository.dart';
@@ -7,7 +8,6 @@ import 'product_viewmodel.dart';
 
 class ProductView extends StatelessWidget {
   const ProductView({super.key, required this.productId, this.initialProduct});
-
   final String productId;
   final Product? initialProduct;
 
@@ -26,16 +26,18 @@ class ProductView extends StatelessWidget {
           }
           if (vm.error != null) {
             return Scaffold(
-              appBar: AppBar(title: const Text('Produit')),              
+              appBar: AppBar(title: const Text('Produit')),
               body: Center(child: Text(vm.error!)),
             );
           }
           final p = vm.product!;
           return Scaffold(
-            appBar: AppBar(title: Text(p.name),actions: [
-              _FavoriteButton(productId: p.id),
-                ],),
-            
+            appBar: AppBar(
+              title: Text(p.name),
+              actions: [
+                _FavoriteButton(productId: p.id),
+              ],
+            ),
             body: ListView(
               padding: const EdgeInsets.all(16),
               children: [
@@ -57,22 +59,67 @@ class ProductView extends StatelessWidget {
                   ...p.ingredients.map((i) => Text('• $i')),
                 ],
                 if (p.warnings.isNotEmpty)
-                 Column(
-               children: p.warnings.map((w) => Card(
-               color: Colors.red.shade50,
-                 child: ListTile(
-             leading: const Icon(Icons.warning_amber_rounded, color: Colors.red),
-          title: Text(w.message, style: const TextStyle(color: Colors.red)),
-      ),
-    )).toList(),
-  ),
-if (p.warnings.isNotEmpty) const SizedBox(height: 16),
+                  Column(
+                    children: p.warnings
+                        .map((w) => Card(
+                              color: Colors.red.shade50,
+                              child: ListTile(
+                                leading: const Icon(Icons.warning_amber_rounded,
+                                    color: Colors.red),
+                                title: Text(w.message,
+                                    style: const TextStyle(color: Colors.red)),
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                if (p.warnings.isNotEmpty) const SizedBox(height: 16),
               ],
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => _openComparePicker(context, p),
+              icon: const Icon(Icons.compare_arrows),
+              label: const Text('Comparer'),
             ),
           );
         },
       ),
     );
+  }
+}
+
+Future<void> _openComparePicker(
+  BuildContext context,
+  Product current,
+) async {
+  final favorites = await context.read<FavoritesRepository>().list();
+  if (!context.mounted) return;
+  final candidate = await showModalBottomSheet<Product>(
+    context: context,
+    builder: (sheetContext) => SafeArea(
+      child: favorites.length <= 1
+          ? const Padding(
+              padding: EdgeInsets.all(24),
+              child:
+                  Text('Ajoutez un autre produit aux favoris pour comparer.'),
+            )
+          : ListView(
+              shrinkWrap: true,
+              children: favorites
+                  .where((favorite) => favorite.id != current.id)
+                  .map(
+                    (favorite) => ListTile(
+                      title: Text(favorite.name),
+                      subtitle: Text(favorite.brand ?? ''),
+                      onTap: () =>
+                          Navigator.of(sheetContext).pop<Product>(favorite),
+                    ),
+                  )
+                  .toList(),
+            ),
+    ),
+  );
+  if (candidate != null && context.mounted) {
+    context.push('/compare', extra: [current, candidate]);
   }
 }
 
@@ -133,6 +180,7 @@ class _SubScore extends StatelessWidget {
     );
   }
 }
+
 class _FavoriteButton extends StatefulWidget {
   const _FavoriteButton({required this.productId});
   final String productId;
@@ -175,6 +223,7 @@ class _FavoriteButtonState extends State<_FavoriteButton> {
     );
   }
 }
+
 class _InfoRow extends StatelessWidget {
   const _InfoRow({required this.label, required this.value});
   final String label;

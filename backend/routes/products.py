@@ -8,7 +8,7 @@ from ..models.product import Product
 from ..models.user import User
 from ..models.scan_history import ScanHistory
 from ..app.services.scoring import compute_score, load_active_weights
-from ..services.alerts import compute_warnings
+from ..app.services.alerts import compute_warnings
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -73,7 +73,24 @@ async def get_score(product_id: UUID, db: AsyncSession = Depends(get_db)):
         weights=weights,
     )
     return {**score.to_dict(), "weights_used": weights}
-
+@router.get("/compare")
+async def compare(
+    ids: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """Retourne les produits correspondant aux IDs (séparés par virgule)."""
+    id_list = [i.strip() for i in ids.split(",") if i.strip()]
+    if len(id_list) > 2:
+        raise HTTPException(status_code=400, detail="Maximum 2 produits")
+    products = []
+    for pid in id_list:
+        try:
+            p = await db.get(Product, UUID(pid))
+        except ValueError:
+            continue
+        if p:
+            products.append(await _serialize(p, db))
+    return products
 
 async def _serialize(p: Product, db: AsyncSession, user: User | None = None) -> dict:
     weights = await load_active_weights(db)
