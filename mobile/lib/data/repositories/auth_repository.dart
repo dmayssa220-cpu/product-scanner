@@ -20,5 +20,10 @@ class AuthRepository {
 
   Future<bool> isAuthenticated() async => (await _storage.readToken()) != null;
 
+  Future<bool> isAdmin() async {
+    final profile = await _api.get('/auth/me', auth: true);
+    return profile['is_admin'] as bool;
+  }
+
   Future<String?> currentEmail() => _storage.readEmail();
 }

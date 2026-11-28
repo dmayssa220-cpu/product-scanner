@@ -18,6 +18,7 @@ class _PhotoScanViewState extends State<PhotoScanView> {
   bool _loading = false;
   String? _error;
   String? _matchedProductId;
+  String? _lastBarcode;
 
   Future<void> _pick(ImageSource source) async {
     final picked = await _picker.pickImage(source: source, imageQuality: 85);
@@ -65,6 +66,11 @@ class _PhotoScanViewState extends State<PhotoScanView> {
               padding: const EdgeInsets.all(16),
               child: Text(_error!, style: const TextStyle(color: Colors.red)),
             ),
+            TextButton.icon(
+           onPressed: () => context.push('/submissions/new', extra: _lastBarcode),
+           icon: const Icon(Icons.add),
+           label: const Text('Proposer ce produit'),
+),
           if (_matchedProductId != null)
             Padding(
               padding: const EdgeInsets.all(16),

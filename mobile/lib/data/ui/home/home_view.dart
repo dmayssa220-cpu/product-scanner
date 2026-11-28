@@ -3,8 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../repositories/auth_repository.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late final Future<bool> _isAdmin;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAdmin = context.read<AuthRepository>().isAdmin();
+  }
 
   Future<void> _logout(BuildContext context) async {
     await context.read<AuthRepository>().logout();
@@ -80,6 +93,24 @@ class HomeView extends StatelessWidget {
                   onPressed: () => context.push('/preferences'),
                   icon: const Icon(Icons.tune),
                   label: const Text('Mes préférences'),
+                ),
+                const SizedBox(height: 12),
+                FutureBuilder<bool>(
+                  future: _isAdmin,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Text(
+                        'Impossible de vérifier le profil : ${snapshot.error}',
+                        textAlign: TextAlign.center,
+                      );
+                    }
+                    if (snapshot.data != true) return const SizedBox.shrink();
+                    return OutlinedButton.icon(
+                      onPressed: () => context.push('/admin/submissions'),
+                      icon: const Icon(Icons.admin_panel_settings),
+                      label: const Text('Modérer les soumissions'),
+                    );
+                  },
                 ),
               ],
             ),

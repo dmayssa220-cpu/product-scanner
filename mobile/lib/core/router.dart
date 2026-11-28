@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import '../data/models/product.dart';
 import '../data/repositories/auth_repository.dart';
+import '../data/ui/submissions/admin_view.dart';
 import '../data/ui/auth/auth_view.dart';
 import '../data/ui/favorites/favorites_view.dart';
 import '../data/ui/home/home_view.dart';
@@ -25,6 +26,10 @@ GoRouter buildRouter(AuthRepository authRepo) {
     routes: [
       GoRoute(path: '/auth', builder: (context, state) => const AuthView()),
       GoRoute(path: '/', builder: (context, state) => const HomeView()),
+      GoRoute(
+        path: '/admin/submissions',
+        builder: (_, __) => const SubmissionsAdminView(),
+      ),
       GoRoute(path: '/scan', builder: (context, state) => const ScanView()),
       GoRoute(path: '/search', builder: (context, state) => const SearchView()),
       GoRoute(path: '/favorites', builder: (_, __) => const FavoritesView()),
