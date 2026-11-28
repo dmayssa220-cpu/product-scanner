@@ -90,3 +90,20 @@ CREATE TABLE favorites (
 );
 
 CREATE INDEX idx_favorites_user ON favorites(user_id, created_at DESC);
+
+CREATE TABLE product_submissions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    barcode VARCHAR(50),
+    payload JSONB NOT NULL,          
+    image_url TEXT,                 
+    status VARCHAR(20) NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending', 'approved', 'rejected')),
+    rejection_reason TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    reviewed_at TIMESTAMPTZ,
+    reviewed_by UUID REFERENCES users(id)
+);
+
+CREATE INDEX idx_submissions_status ON product_submissions(status, created_at DESC);
+CREATE INDEX idx_submissions_user ON product_submissions(user_id, created_at DESC);

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .core.config import settings
 from .routes import health, products, auth, history, identify, admin, favorites
-
+from .routes import submissions
 app = FastAPI(title="Product Scanner API", version="0.3.0")
 app.add_middleware(
     CORSMiddleware,
@@ -18,3 +18,4 @@ app.include_router(history.router, prefix=settings.api_v1_prefix)
 app.include_router(identify.router, prefix=settings.api_v1_prefix)
 app.include_router(admin.router, prefix=settings.api_v1_prefix)
 app.include_router(favorites.router, prefix=settings.api_v1_prefix)
+app.include_router(submissions.router, prefix=settings.api_v1_prefix)
